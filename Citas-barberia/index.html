@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reserva tu Cita - Barbería</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body class="bg-blue-50 min-h-screen flex flex-col">
+  <!-- Preloader -->
+  <div id="pageloader-overlay" class="fixed inset-0 bg-white flex items-center justify-center z-50 transition-opacity duration-500">
+    <img src="logo.jpg" alt="Cargando..." class="w-20 h-20 animate-pulse">
+  </div>
+
+  <!-- Header -->
+  <header class="bg-blue-900 shadow-md py-4 px-6 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <img src="logo.jpg" alt="Logo Barbería" class="w-12 h-12 rounded-full border-2 border-white" />
+      <h1 class="text-xl font-bold text-white">Men's Club Barbería</h1>
+    </div>
+  </header>
+
+  <!-- Contenido principal -->
+  <main class="flex-grow flex items-center justify-center px-4 py-10">
+    <div class="bg-white p-8 md:p-10 rounded-2xl shadow-2xl max-w-md w-full">
+      <h2 class="text-3xl font-bold text-blue-900 mb-6 text-center">Reserva tu Cita</h2>
+      <form id="reservation-form" class="space-y-5">
+        <div>
+          <label for="name" class="block text-sm font-medium text-blue-800">Nombre</label>
+          <input type="text" id="name" name="name" required placeholder="Tu nombre completo"
+            class="mt-1 w-full px-4 py-3 border border-blue-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-800" />
+        </div>
+        <div>
+          <label for="phone" class="block text-sm font-medium text-blue-800">Teléfono</label>
+          <input type="tel" id="phone" name="phone" required placeholder="Tu número de teléfono"
+            class="mt-1 w-full px-4 py-3 border border-blue-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-800" />
+        </div>
+        <div>
+          <label for="date" class="block text-sm font-medium text-blue-800">Fecha</label>
+          <input type="date" id="date" name="date" required
+            class="mt-1 w-full px-4 py-3 border border-blue-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-800" />
+        </div>
+        <div>
+          <label for="time" class="block text-sm font-medium text-blue-800">Hora</label>
+          <input type="time" id="time" name="time" required
+            class="mt-1 w-full px-4 py-3 border border-blue-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-800" />
+        </div>
+        <div>
+          <label for="service" class="block text-sm font-medium text-blue-800">Servicio</label>
+          <select id="service" name="service" required
+            class="mt-1 w-full px-4 py-3 border border-blue-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-800">
+            <option value="Corte Varonil">Corte Varonil</option>
+            <option value="Corte Navajeado">Corte Navajeado</option>
+            <option value="Taper Fade">Taper Fade</option>
+            <option value="Cejas Naturales">Cejas Naturales</option>
+            <option value="Cejas Pigmentadas">Cejas Pigmentadas</option>
+            <option value="Cejas Semipermanentes con Henna">Cejas con Henna</option>
+            <option value="Perfilación de Cortes">Perfilación</option>
+            <option value="Barba">Barba</option>
+            <option value="Mascarilla - Puntos negros">Mascarilla</option>
+            <option value="Diseños">Diseños</option>
+          </select>
+        </div>
+        <button type="submit"
+          class="w-full bg-blue-800 hover:bg-blue-900 text-white font-semibold py-3 px-4 rounded-lg transition duration-300 shadow-md">
+          Confirmar Reserva
+        </button>
+      </form>
+      <div id="response" class="mt-4 text-center text-sm text-green-600 font-medium"></div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-blue-900 text-white py-4 px-4 text-center text-sm">
+    <p class="leading-tight">📍 Americas 1 grupo B andén 11 (costado sur del C.D.I.), Managua, Nicaragua</p>
+    <div class="mt-2 flex justify-center gap-4">
+      <a href="https://www.facebook.com/profile.php?id=61567590082721&locale=es_LA" target="_blank" class="hover:text-blue-300"><i class="fab fa-facebook-f"></i></a>
+      <a href="https://www.instagram.com/mens_club_barbershop05/" target="_blank" class="hover:text-blue-300"><i class="fab fa-instagram"></i></a>
+      <a href="https://www.tiktok.com/@mensclub_barbershop1" target="_blank" class="hover:text-blue-300"><i class="fab fa-tiktok"></i></a>
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const preloader = document.getElementById("pageloader-overlay");
+      setTimeout(() => {
+        preloader.classList.add("opacity-0", "pointer-events-none");
+      }, 1000);
+    });
+
+    document.getElementById("reservation-form").addEventListener("submit", function (event) {
+      event.preventDefault();
+
+      const name = document.getElementById("name").value.trim();
+      const phone = document.getElementById("phone").value.trim();
+      const date = document.getElementById("date").value;
+      const time = document.getElementById("time").value;
+      const service = document.getElementById("service").value;
+
+      const reservations = JSON.parse(localStorage.getItem("reservations")) || [];
+      const isTaken = reservations.some(r => r.date === date && r.time === time);
+
+      if (isTaken) {
+        alert("Esta hora ya está ocupada. Por favor, elige otra.");
+        return;
+      }
+
+      reservations.push({ name, phone, date, time, service });
+      localStorage.setItem("reservations", JSON.stringify(reservations));
+
+      const message = `\u2705 *Nueva Reserva*\n\n*Nombre:* ${name}\n*Teléfono:* ${phone}\n*Fecha:* ${date}\n*Hora:* ${time}\n*Servicio:* ${service}`;
+      const whatsappURL = `https://wa.me/50557572582?text=${encodeURIComponent(message)}`;
+
+      document.getElementById("response").textContent = "¡Reserva enviada correctamente! Redirigiendo a WhatsApp...";
+      setTimeout(() => {
+        window.location.href = whatsappURL;
+      }, 1000);
+    });
+  </script>
+</body>
+</html>
